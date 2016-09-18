@@ -76,6 +76,7 @@ public class ConnectStandalone {
         String workerId = advertisedUrl.getHost() + ":" + advertisedUrl.getPort();
 
         FileOffsetBackingStore offsetBackingStore = new FileOffsetBackingStore();
+//        Worker worker = new Worker(workerId, time, config, new FileOffsetBackingStore());
         Worker worker = new Worker(workerId, time, config, offsetBackingStore);
 
 //        Herder herder = new StandaloneHerder(worker);

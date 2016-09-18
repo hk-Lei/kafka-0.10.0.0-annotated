@@ -34,6 +34,30 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import org.apache.kafka.connect.runtime.AbstractHerder;
+import org.apache.kafka.connect.runtime.ConnectorConfig;
+import org.apache.kafka.connect.runtime.HerderConnectorContext;
+import org.apache.kafka.connect.runtime.SinkConnectorConfig;
+import org.apache.kafka.connect.runtime.SourceConnectorConfig;
+import org.apache.kafka.connect.runtime.TargetState;
+import org.apache.kafka.connect.runtime.TaskConfig;
+import org.apache.kafka.connect.runtime.Worker;
+import org.apache.kafka.connect.runtime.distributed.ClusterConfigState;
+import org.apache.kafka.connect.runtime.rest.entities.ConnectorInfo;
+import org.apache.kafka.connect.runtime.rest.entities.TaskInfo;
+import org.apache.kafka.connect.storage.ConfigBackingStore;
+import org.apache.kafka.connect.storage.MemoryConfigBackingStore;
+import org.apache.kafka.connect.storage.MemoryStatusBackingStore;
+import org.apache.kafka.connect.storage.StatusBackingStore;
+import org.apache.kafka.connect.util.Callback;
+import org.apache.kafka.connect.util.ConnectorTaskId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Single process, in-memory "herder". Useful for a standalone Kafka Connect process.
@@ -280,6 +304,7 @@ public class StandaloneHerder extends AbstractHerder {
             TaskConfig config = new TaskConfig(taskConfigMap);
             try {
                 worker.startTask(taskId, config, this, initialState);
+
                 OffsetStorageReader offsetReader = new OffsetStorageReaderImpl(offsetBackingStore, taskId.connector(),
                         worker.getInternalKeyConverter(), worker.getInternalValueConverter());
 
@@ -390,5 +415,4 @@ public class StandaloneHerder extends AbstractHerder {
 
         return new ConnectorStateInfo(connName, connectorState, taskStates);
     }
-
 }
